@@ -1,0 +1,226 @@
+---
+title: "Introduction to ppcviz"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to ppcviz}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+set.seed(2025)
+```
+
+# Overview
+
+`ppcviz` implements the novel diagnostic tools from:
+
+> Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).
+> *Recommendations for visual predictive checks in Bayesian workflow*.
+> arXiv:2503.01509.
+
+The core idea is: **treat the visualization itself as a density estimator**
+and test whether it faithfully represents the data. A beautiful plot that
+misrepresents the distribution is worse than no plot at all.
+
+```{r load}
+library(ppcviz)
+```
+
+---
+
+## Part 1: Data Property Detection
+
+Before choosing a plot, diagnose your data.
+
+### Discreteness detection
+
+```{r detect-discrete}
+# Continuous normal — nothing flagged
+detect_discrete(rnorm(300))
+
+# Poisson counts
+detect_discrete(rpois(300, lambda = 4))
+
+# Zero-inflated normal
+y_mixed <- c(rep(0, 80), rnorm(220, mean = 2))
+detect_discrete(y_mixed)
+```
+
+### Boundary detection
+
+```{r detect-bounds}
+# Unbounded
+detect_bounds(rnorm(300))
+
+# Non-negative
+detect_bounds(rexp(300))
+
+# Proportions [0, 1]
+detect_bounds(rbeta(300, 2, 5))
+```
+
+---
+
+## Part 2: Visualization PIT Values
+
+The *visualization PIT* (Probability Integral Transform) quantifies how well
+a chosen plot type represents the empirical distribution.  If the PIT values
+are uniform on \([0,1]\), the visualization is faithful; non-uniformity
+reveals where the plot is misleading.
+
+### KDE PIT
+
+```{r pit-kde}
+y <- rnorm(300)
+pit <- pit_kde(y)
+hist(pit, breaks = 25, main = "KDE PIT — normal data (should be ~uniform)",
+     xlab = "PIT", col = "#DCE0F5", border = "white")
+```
+
+#### Bounded data
+
+Without a boundary correction, a KDE on \([0,1]\) data leaks density outside
+the valid range, causing systematic non-uniformity:
+
+```{r pit-kde-bounded}
+y_beta <- rbeta(300, 2, 5)
+
+# Without bounds — PIT will pile up near 0 and 1
+pit_bad <- pit_kde(y_beta)
+hist(pit_bad, breaks = 25, main = "KDE PIT — Beta data WITHOUT bounds",
+     xlab = "PIT", col = "#FFD0D0", border = "white")
+
+# With reflection correction — should be ~uniform
+pit_ok <- pit_kde(y_beta, bounds = c(0, 1))
+hist(pit_ok, breaks = 25, main = "KDE PIT — Beta data WITH bounds = c(0,1)",
+     xlab = "PIT", col = "#DCE0F5", border = "white")
+```
+
+### Histogram PIT
+
+```{r pit-histogram}
+pit_h <- pit_histogram(y)
+hist(pit_h, breaks = 25, main = "Histogram PIT — normal data",
+     xlab = "PIT", col = "#DCE0F5", border = "white")
+```
+
+### Quantile dot plot PIT
+
+```{r pit-qdotplot}
+pit_q <- pit_qdotplot(y, n_quantiles = 50L)
+hist(pit_q, breaks = 25, main = "Quantile dot plot PIT — normal data",
+     xlab = "PIT", col = "#DCE0F5", border = "white")
+```
+
+---
+
+## Part 3: Goodness-of-Fit for Visualizations
+
+`viz_gof()` tests whether the PIT values are consistent with uniformity using
+*simultaneous* ECDF confidence bands (Säilynoja, Bürkner & Vehtari 2022).
+
+```{r viz-gof-pass}
+# Normal data with KDE — should pass
+result_pass <- viz_gof(pit_kde(y), n_sim = 500)
+print(result_pass)
+plot(result_pass)
+```
+
+```{r viz-gof-fail}
+# Beta data without boundary correction — may fail
+result_fail <- viz_gof(pit_kde(y_beta), n_sim = 500)
+print(result_fail)
+plot(result_fail)
+```
+
+### Convenience wrapper
+
+`check_viz()` combines PIT computation and the GoF test and prints a
+human-readable verdict:
+
+```{r check-viz}
+check_viz(y, method = "kde")
+check_viz(y_beta, method = "kde")
+check_viz(y_beta, method = "kde", bounds = c(0, 1))
+```
+
+---
+
+## Part 4: PAVA Calibration Plots
+
+These plots are the paper's main contribution for **binary and discrete
+outcomes**. They do not exist in `bayesplot`.
+
+### Binary calibration
+
+```{r calibration-binary}
+n <- 200
+true_p <- plogis(rnorm(n))
+y_bin  <- rbinom(n, 1, true_p)
+yrep   <- do.call(rbind, lapply(seq_len(100), function(i) rbinom(n, 1, true_p)))
+
+# Well-calibrated predictions — should be near the diagonal
+ppc_calibration(y_bin, yrep, n_boot = 200)
+```
+
+```{r calibration-residual}
+ppc_calibration_residual(y_bin, yrep, n_boot = 200)
+```
+
+### Discrete / ordinal calibration
+
+```{r calibration-discrete}
+y3    <- sample(0:2, n, replace = TRUE)
+yrep3 <- do.call(rbind, lapply(seq_len(100), function(i) sample(0:2, n, replace = TRUE)))
+ppc_calibration_discrete(y3, yrep3, n_boot = 100)
+```
+
+---
+
+## Part 5: Automatic Recommender
+
+`recommend_ppc()` combines all the detection and testing logic to suggest the
+most appropriate `bayesplot` (or `ppcviz`) function for your data:
+
+```{r recommend-continuous}
+recommend_ppc(rnorm(300))
+```
+
+```{r recommend-bounded}
+recommend_ppc(rexp(300))
+```
+
+```{r recommend-proportion}
+recommend_ppc(rbeta(300, 2, 5))
+```
+
+```{r recommend-discrete}
+recommend_ppc(rpois(300, lambda = 3))
+```
+
+```{r recommend-mixed}
+recommend_ppc(c(rep(0, 70), rnorm(230, mean = 2)))
+```
+
+```{r recommend-binary}
+recommend_ppc(sample(0:1, 300, replace = TRUE))
+```
+
+---
+
+## Citation
+
+If you use `ppcviz` in a publication, please cite the original paper:
+
+```
+Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).
+Recommendations for visual predictive checks in Bayesian workflow.
+arXiv:2503.01509.
+```
