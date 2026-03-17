@@ -6,9 +6,9 @@
 
 `ppcviz` implements the novel contributions from:
 
-> Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).
-> *Recommendations for visual predictive checks in Bayesian workflow*.
-> arXiv:2503.01509.
+> [Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).  
+> *Recommendations for visual predictive checks in Bayesian workflow*.  
+> arXiv:2503.01509](https://arxiv.org/abs/2503.01509)
 
 The package answers a question that `bayesplot` cannot: **is the plot type I
 chose faithful to my data?** A KDE overlay, a histogram, and a quantile dot
