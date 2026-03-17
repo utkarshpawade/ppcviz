@@ -47,6 +47,38 @@ install.packages("c:/Projects/Paper Implementation/ppcviz",
 
 ---
 
+## Gallery
+
+### Visualization goodness-of-fit: `viz_gof()`
+
+KDE on normal data — **passes** the uniformity test:
+
+![viz_gof passes](man/figures/viz_gof_pass.png)
+
+KDE on Beta(2,5) data **without** boundary correction — **fails**:
+
+![viz_gof fails](man/figures/viz_gof_fail.png)
+
+Same Beta(2,5) data **with** `bounds = c(0, 1)` — **passes** after correction:
+
+![viz_gof bounds corrected](man/figures/viz_gof_bounds.png)
+
+### Calibration plots
+
+Binary PAVA calibration (`ppc_calibration`):
+
+![ppc_calibration](man/figures/ppc_calibration.png)
+
+Calibration residual plot (`ppc_calibration_residual`):
+
+![ppc_calibration_residual](man/figures/ppc_calibration_residual.png)
+
+Discrete / ordinal calibration (`ppc_calibration_discrete`):
+
+![ppc_calibration_discrete](man/figures/ppc_calibration_discrete.png)
+
+---
+
 ## Quick demo
 
 ```r
