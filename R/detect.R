@@ -53,8 +53,6 @@ detect_discrete <- function(y, threshold = 0.02) {
 
   is_discrete <- length(flagged_values) > 0
 
-  # Mixed: point masses AND many unique values (continuous bulk).
-  # Heuristic: flagged values exist AND unique_ratio > 0.1
   is_mixed <- is_discrete && (unique_ratio > 0.1) && (n_unique > 10)
 
   structure(
@@ -149,11 +147,6 @@ detect_bounds <- function(y, tol = 0.01) {
   lower <- NULL
   upper <- NULL
 
-  # --- Proportion detection (highest priority) ---
-  # If ALL values are in [0, 1] and the minimum is close to 0, treat as
-  # proportions bounded to [0, 1].  We do not require max(y) to be near 1
-  # because many distributions (e.g. Beta(2,5)) rarely produce values
-  # above 0.85 in realistic sample sizes.
   if (all(y >= 0) && all(y <= 1) && rng[1] <= 0.15) {
     lower <- 0
     upper <- 1
@@ -173,16 +166,12 @@ detect_bounds <- function(y, tol = 0.01) {
     ))
   }
 
-  # --- Lower bound detection ---
-  # Fit a KDE and check if density near min(y) is high relative to interior
   kde <- stats::density(y, n = 512)
   kde_fun <- stats::approxfun(kde$x, kde$y, rule = 2)
 
-  # Density at min(y) vs density at min(y) + 10% of range
   d_at_min  <- kde_fun(rng[1])
   d_at_10pct <- kde_fun(rng[1] + 0.1 * span)
 
-  # Sharp lower cutoff: density is elevated near the minimum
   lower_sharp <- (d_at_min > 0.5 * d_at_10pct) && (d_at_min > 0)
 
   if (all(y >= 0) && rng[1] <= tol * span) {
@@ -191,7 +180,6 @@ detect_bounds <- function(y, tol = 0.01) {
     lower <- rng[1]
   }
 
-  # --- Upper bound detection ---
   d_at_max   <- kde_fun(rng[2])
   d_at_90pct <- kde_fun(rng[2] - 0.1 * span)
 
@@ -255,9 +243,6 @@ print.bounds_check <- function(x, ...) {
 }
 
 
-# ---------------------------------------------------------------------------
-# Internal helper: validate y
-# ---------------------------------------------------------------------------
 .validate_y <- function(y, min_n = 3L) {
   if (!is.numeric(y)) {
     rlang::abort("`y` must be a numeric vector.")

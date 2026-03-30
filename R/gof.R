@@ -76,23 +76,17 @@ viz_gof <- function(pit, prob = 0.95, K = NULL, n_sim = 1000L) {
   if (is.null(K)) K <- min(n, 1000L)
   K <- as.integer(K)
 
-  # Evaluation points (open interval to avoid 0/1 boundary issues with SE)
   z <- (seq_len(K) - 0.5) / K
 
-  # Calibrate gamma via Monte Carlo
   gamma <- .adjust_gamma_optimize(n = n, prob = prob, K = K, n_sim = n_sim)
 
-  # Compute bands
   bands <- .ecdf_bands(z, n, gamma)
 
-  # Evaluate empirical ECDF of pit at z
   ecdf_fn <- stats::ecdf(pit)
   ecdf_vals <- ecdf_fn(z)
 
-  # Max deviation
   max_dev <- max(abs(ecdf_vals - z))
 
-  # Passes if ECDF lies within the band at all evaluation points
   passes <- all(ecdf_vals >= bands$lower & ecdf_vals <= bands$upper)
 
   structure(
@@ -231,7 +225,6 @@ check_viz <- function(y, method = c("kde", "histogram", "qdotplot"), ...) {
 
   result <- viz_gof(pit)
 
-  # Human-readable verdict
   method_name <- switch(method,
     kde       = "KDE density plot",
     histogram = "histogram",

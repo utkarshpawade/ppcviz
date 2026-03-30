@@ -109,11 +109,9 @@ ppc_calibration_residual <- function(y, yrep, x = NULL, n_quantiles = 10L,
     x_label     <- "Predicted probability"
   }
 
-  # Compute CEP w.r.t. predicted probabilities (always), then map to x-axis
   cep_df   <- .compute_cep(y, p, n_quantiles)
   boot     <- .boot_cep(y, p, n_quantiles, n_boot, prob)
 
-  # Residuals: CEP - predicted probability midpoint of each bin
   cep_df$resid      <- cep_df$cep - cep_df$p_mid
   boot$lower_resid  <- boot$lower - cep_df$p_mid
   boot$upper_resid  <- boot$upper - cep_df$p_mid
@@ -218,9 +216,7 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
   col <- .ppcviz_colors()
 
   all_panels <- lapply(categories, function(k) {
-    # Binarise: 1 if y == k, else 0
     y_k <- as.integer(y == k)
-    # Predicted P(Y = k) = colMeans of (yrep == k)
     p_k <- colMeans(yrep == k)
 
     cep_df_k <- .compute_cep(y_k, p_k, n_quantiles)
@@ -275,10 +271,6 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
 }
 
 
-# ---------------------------------------------------------------------------
-# Internal calibration helpers
-# ---------------------------------------------------------------------------
-
 .check_calibration_args <- function(y, yrep) {
   if (!is.numeric(y) && !is.logical(y)) {
     rlang::abort("`y` must be a numeric (0/1) or logical vector.")
@@ -290,8 +282,6 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
   .check_yrep_dims(y, yrep)
   yrep <- as.matrix(yrep)
 
-  # Predicted probability = column means of posterior predictive draws
-  # For binary yrep, this is P(Y = 1 | data)
   p <- colMeans(yrep)
   list(y = y, p = p)
 }
@@ -320,20 +310,16 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
                                    type = 7))
   bins <- cut(p, breaks = breaks, include.lowest = TRUE)
 
-  # Average predicted probability and observed proportion per bin
   bin_p_mid <- tapply(p, bins, mean)
   bin_obs   <- tapply(y, bins, mean)
 
-  # Remove bins with no data
   valid <- !is.na(bin_p_mid) & !is.na(bin_obs)
   bin_p_mid <- as.numeric(bin_p_mid[valid])
   bin_obs   <- as.numeric(bin_obs[valid])
 
-  # Isotonic regression (monotone non-decreasing)
   if (requireNamespace("Iso", quietly = TRUE)) {
     cep <- Iso::pava(bin_obs, w = as.numeric(table(bins)[valid]))
   } else {
-    # Fallback: stats::isoreg
     iso  <- stats::isoreg(bin_p_mid, bin_obs)
     cep  <- iso$yf
   }
@@ -348,7 +334,6 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
   alpha <- 1 - prob
 
   boot_cep_mat <- tryCatch({
-    # Pre-compute quantile breaks from original data
     n_q    <- as.integer(n_quantiles)
     breaks <- unique(stats::quantile(p, probs = seq(0, 1, length.out = n_q + 1L),
                                      type = 7))
@@ -379,7 +364,6 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
         cep_b <- stats::isoreg(p_mid_b, obs_b)$yf
       }
 
-      # Align to n_valid bins by padding with NA if needed
       if (length(cep_b) == n_valid) {
         mat[b, ] <- cep_b
       }

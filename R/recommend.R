@@ -65,7 +65,6 @@ recommend_ppc <- function(y, yrep = NULL) {
   avoid       <- character(0)
   reason      <- character(0)
 
-  # ---- Binary check first (takes priority) --------------------------------
   is_binary <- all(y %in% c(0, 1)) && disc$n_unique == 2L
 
   if (is_binary) {
@@ -78,7 +77,6 @@ recommend_ppc <- function(y, yrep = NULL) {
       "Density-based and ECDF plots are not appropriate for binary outcomes."
     )
 
-  # ---- Discrete (non-binary) -----------------------------------------------
   } else if (disc$is_discrete && !disc$is_mixed) {
     n_unique <- disc$n_unique
     data_type <- "discrete"
@@ -104,7 +102,6 @@ recommend_ppc <- function(y, yrep = NULL) {
       "or ECDF-based plots for larger ones."
     )
 
-  # ---- Mixed / zero-inflated -----------------------------------------------
   } else if (disc$is_mixed) {
     data_type   <- "mixed"
     recommended <- c("ppc_rootogram()", "ppc_ecdf_overlay(discrete = TRUE)")
@@ -116,11 +113,9 @@ recommend_ppc <- function(y, yrep = NULL) {
       "ppc_rootogram() for count-like data."
     )
 
-  # ---- Continuous ----------------------------------------------------------
   } else {
     data_type <- "continuous"
 
-    # Test KDE if yrep is provided
     if (!is.null(yrep)) {
       kde_gof <- tryCatch(
         check_viz(y, method = "kde"),
@@ -188,7 +183,6 @@ recommend_ppc <- function(y, yrep = NULL) {
           "Consider ppc_dots() (quantile dot plot) or ppc_ecdf_overlay() instead."
         )
       } else {
-        # No yrep provided — give general advice
         recommended <- c("ppc_dens_overlay()", "ppc_ecdf_overlay()")
         avoid       <- character(0)
         reason      <- paste0(

@@ -1,15 +1,4 @@
-# ---------------------------------------------------------------------------
-# Internal utilities for ppcviz
-# ---------------------------------------------------------------------------
-
-# Suppress R CMD check NOTE about .data pronoun from rlang/tidyeval
 utils::globalVariables(".data")
-# Implements the simultaneous ECDF band calibration from:
-#   Sailynoja, Burkner & Vehtari (2022), Graphical test for discrete uniformity
-#   as a faster alternative to the Kolmogorov-Smirnov test.
-# Adapted from the public description (not from bayesplot source) to avoid
-# depending on bayesplot internals.
-# ---------------------------------------------------------------------------
 
 
 #' Adjust gamma for simultaneous ECDF confidence bands (internal)
@@ -28,14 +17,11 @@ utils::globalVariables(".data")
 .adjust_gamma_optimize <- function(n, prob = 0.95, K = NULL, n_sim = 1000L) {
   if (is.null(K)) K <- min(n, 1000L)
 
-  # Evaluation points on (0, 1) — open to avoid sqrt(0)
   z <- (seq_len(K) - 0.5) / K
 
-  # Standard error at each evaluation point (Brownian bridge SE)
   se_z <- sqrt(z * (1 - z) / n)
 
-  # Monte Carlo: simulate uniform samples, compute max standardised deviation
-  set.seed(NULL)  # use R's current RNG state
+  set.seed(NULL)
   max_devs <- vapply(seq_len(n_sim), function(i) {
     u <- sort(stats::runif(n))
     ecdf_vals <- (seq_len(n)) / n
@@ -52,7 +38,6 @@ utils::globalVariables(".data")
     max(dev, na.rm = TRUE)
   }, numeric(1))
 
-  # gamma = quantile of the simulated max-deviation distribution
   gamma <- stats::quantile(max_devs, probs = prob, names = FALSE)
   gamma
 }
