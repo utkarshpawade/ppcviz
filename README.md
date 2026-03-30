@@ -159,12 +159,8 @@ recommend_ppc(rpois(300, lambda = 3))
 
 ## Citation
 
-```bibtex
-@misc{sailynoja2025ppc,
-  title  = {Recommendations for visual predictive checks in {B}ayesian workflow},
-  author = {S{\"a}ilynoja, Teemu and Johnson, Andrew and Martin, Ravi and Vehtari, Aki},
-  year   = {2025},
-  eprint = {2503.01509},
-  archivePrefix = {arXiv}
-}
-```
+This project is inspired by and partially based on:
+
+- Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).  
+  [*Recommendations for visual predictive checks in Bayesian workflow*](https://arxiv.org/abs/2503.01509)  
+  arXiv:2503.01509.
