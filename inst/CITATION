@@ -1,0 +1,14 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "Recommendations for visual predictive checks in Bayesian workflow",
+  author   = c(
+    person("Teemu", "Säilynoja"),
+    person("Aki", "Johnson"),
+    person("Raul", "Martin"),
+    person("Aki", "Vehtari")
+  ),
+  year     = "2025",
+  journal  = "arXiv preprint",
+  note     = "arXiv:2503.01509",
+  url      = "https://arxiv.org/abs/2503.01509"
+)

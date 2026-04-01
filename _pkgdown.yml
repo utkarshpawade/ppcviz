@@ -2,19 +2,25 @@ url: https://utkarshpawade.github.io/ppcviz/
 
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bootswatch: cosmo
+  bslib:
+    primary: "#3F4A8A"
 
 home:
   title: "ppcviz — Visual Predictive Check Diagnostics"
   description: >
-    A self-learning implementation of the methodology from Säilynoja, Johnson,
-    Martin & Vehtari (2025) arXiv:2503.01509. Provides tools to test whether
-    a chosen PPC plot faithfully represents your data.
+    R package implementing Säilynoja et al. (2025) methodology for testing
+    whether a chosen PPC plot faithfully represents your data distribution.
+    Provides visualization PIT values, goodness-of-fit tests, PAVA calibration
+    plots, and automatic plot recommendation.
+  sidebar:
+    structure: [links, license, citation, dev]
   links:
     - text: "Source paper (arXiv:2503.01509)"
       href: https://arxiv.org/abs/2503.01509
 
 navbar:
+  bg: primary
   structure:
     left:  [intro, reference, articles]
     right: [github]
@@ -28,13 +34,15 @@ navbar:
     github:
       icon: fa-github
       href: https://github.com/utkarshpawade/ppcviz
+      aria-label: GitHub
 
 reference:
   - title: "Visualization PIT values"
     desc: >
       Compute probability integral transform (PIT) values for a specific
-      plot type. Non-uniform PITs indicate the visualization misrepresents
-      the data distribution.
+      plot type. If the resulting PIT values are uniform on [0, 1], the
+      visualization is faithful to the data; non-uniformity reveals where
+      the plot misleads.
     contents:
       - pit_kde
       - pit_histogram
@@ -43,23 +51,26 @@ reference:
   - title: "Goodness-of-fit tests"
     desc: >
       Test whether PIT values are consistent with the uniform distribution
-      using simultaneous ECDF confidence bands.
+      using simultaneous ECDF confidence bands calibrated via Monte Carlo
+      simulation (Säilynoja, Bürkner & Vehtari, 2022).
     contents:
       - viz_gof
       - check_viz
 
   - title: "Data property detection"
     desc: >
-      Detect discreteness, point masses, and natural boundaries in observed
-      data before choosing a plot type.
+      Automatically detect discreteness, point masses, zero-inflation, and
+      natural boundaries (non-negativity, proportions) in observed data
+      before choosing a plot type.
     contents:
       - detect_discrete
       - detect_bounds
 
   - title: "Calibration plots"
     desc: >
-      PAVA-based calibration plots for binary and discrete outcomes.
-      Not available in bayesplot.
+      PAVA-based (isotonic regression) calibration plots for binary and
+      discrete outcomes with bootstrap consistency intervals. These plots
+      are not available in bayesplot and implement Sections 4-5 of the paper.
     contents:
       - ppc_calibration
       - ppc_calibration_residual
@@ -67,10 +78,13 @@ reference:
 
   - title: "Automatic recommender"
     desc: >
-      Data-driven recommendation of the most appropriate PPC plot function.
+      Examines data properties and optionally runs a KDE goodness-of-fit
+      test, then returns a prioritised recommendation of which PPC plot
+      function to use for your data.
     contents:
       - recommend_ppc
 
 footer:
   structure:
+    left: developed_by
     right: built_with

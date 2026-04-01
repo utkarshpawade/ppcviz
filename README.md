@@ -1,171 +1,91 @@
-# ppcviz
+# ppcviz <img src="man/figures/viz_gof_pass.png" align="right" width="250" style="margin-left: 20px;" />
 
-This is a personal study project. I implemented this R package to understand
-the methodology in the paper below by translating it into working code.
-It is not intended for publication or distribution.
+**Diagnostics and Recommendations for Visual Predictive Checks in Bayesian Workflow**
 
----
-
-**Paper being implemented:**
-
-> [Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).  
-> *Recommendations for visual predictive checks in Bayesian workflow*.  
-> arXiv:2503.01509](https://arxiv.org/abs/2503.01509)
-
-All statistical methodology, terminology, and algorithms belong to the original
-authors. This code is an independent reimplementation for learning purposes only.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
 ---
 
-The package answers a question that `bayesplot` cannot: **is the plot type I
-chose faithful to my data?** A KDE overlay, a histogram, and a quantile dot
-plot all represent the same data differently — `ppcviz` quantifies how much
-each representation distorts the distribution, using the data's own PIT values
-as a probe.
+An R package implementing the methodology from [Säilynoja, Johnson, Martin & Vehtari (2025)](https://arxiv.org/abs/2503.01509) to answer a question that **bayesplot** cannot:
 
----
+> **Is the plot type I chose actually faithful to my data?**
 
-## What is new vs. bayesplot?
+A KDE overlay, a histogram, and a quantile dot plot all represent the same
+data differently. `ppcviz` quantifies how much each representation distorts
+the distribution using *visualization PIT values* as a diagnostic probe.
 
-`bayesplot` already provides excellent PPC plots. `ppcviz` adds what is
-**not** in `bayesplot`:
+This is an independent reimplementation for self-learning purposes.
+All statistical methodology belongs to the original paper authors.
 
-| Feature | `bayesplot` | `ppcviz` |
-|---|---|---|
-| Boundary-corrected KDE PPC | `ppc_dens_overlay(bounds=)` | — |
-| **Visualization PIT values** | — | `pit_kde()`, `pit_histogram()`, `pit_qdotplot()` |
-| **Viz. goodness-of-fit test** | — | `viz_gof()`, `check_viz()` |
-| **Data property detection** | — | `detect_discrete()`, `detect_bounds()` |
-| **PAVA calibration plots** | — | `ppc_calibration()`, `ppc_calibration_residual()`, `ppc_calibration_discrete()` |
-| **Automatic recommender** | — | `recommend_ppc()` |
+## Key features
 
----
+| Capability | Functions |
+|---|---|
+| **Visualization PIT values** — test if a plot type faithfully represents data | `pit_kde()`, `pit_histogram()`, `pit_qdotplot()` |
+| **Goodness-of-fit test** — simultaneous ECDF band test for PIT uniformity | `viz_gof()`, `check_viz()` |
+| **Data property detection** — detect discreteness, point masses, boundaries | `detect_discrete()`, `detect_bounds()` |
+| **PAVA calibration plots** — calibration for binary and discrete outcomes | `ppc_calibration()`, `ppc_calibration_residual()`, `ppc_calibration_discrete()` |
+| **Automatic recommender** — data-driven PPC plot selection | `recommend_ppc()` |
 
-## Installation (local only)
+## Installation
 
 ```r
-# Install from local source
+# From GitHub
+devtools::install_github("utkarshpawade/ppcviz")
+
+# Or from local source
 devtools::install("path/to/ppcviz")
 ```
 
----
-
-## Gallery
-
-### Visualization goodness-of-fit: `viz_gof()`
-
-KDE on normal data — **passes** the uniformity test:
-
-![viz_gof passes](man/figures/viz_gof_pass.png)
-
-KDE on Beta(2,5) data **without** boundary correction — **fails**:
-
-![viz_gof fails](man/figures/viz_gof_fail.png)
-
-Same Beta(2,5) data **with** `bounds = c(0, 1)` — **passes** after correction:
-
-![viz_gof bounds corrected](man/figures/viz_gof_bounds.png)
-
-### Calibration plots
-
-Binary PAVA calibration (`ppc_calibration`):
-
-![ppc_calibration](man/figures/ppc_calibration.png)
-
-Calibration residual plot (`ppc_calibration_residual`):
-
-![ppc_calibration_residual](man/figures/ppc_calibration_residual.png)
-
-Discrete / ordinal calibration (`ppc_calibration_discrete`):
-
-![ppc_calibration_discrete](man/figures/ppc_calibration_discrete.png)
-
----
-
-## Quick demo
+## Quick example
 
 ```r
 library(ppcviz)
-
 set.seed(42)
+
+# Is a KDE plot appropriate for this data?
 y <- rnorm(300)
-
-# 1. Detect data properties
-detect_discrete(y)   # => not discrete
-detect_bounds(y)     # => no natural bounds
-
-# 2. Test if a KDE is an appropriate visualization
 check_viz(y, method = "kde")
-# i KDE density plot is APPROPRIATE for this data.
+#> KDE density plot is APPROPRIATE for this data.
 
-# 3. Test if KDE is appropriate for bounded Beta data
+# What about bounded Beta data without correction?
 y_beta <- rbeta(300, 2, 5)
 check_viz(y_beta, method = "kde")
-# ! KDE density plot may be MISLEADING for this data.
+#> KDE density plot may be MISLEADING for this data.
 
+# Fix it with boundary correction
 check_viz(y_beta, method = "kde", bounds = c(0, 1))
-# i KDE density plot is APPROPRIATE for this data.
+#> KDE density plot is APPROPRIATE for this data.
 
-# 4. PAVA calibration plot for binary outcomes
-n      <- 200
-true_p <- plogis(rnorm(n))
-y_bin  <- rbinom(n, 1, true_p)
-yrep   <- do.call(rbind, lapply(1:100, function(i) rbinom(n, 1, true_p)))
-ppc_calibration(y_bin, yrep)
-
-# 5. Get an automatic recommendation
+# Get an automatic recommendation for any data type
 recommend_ppc(rpois(300, lambda = 3))
-# => Use ppc_rootogram() or ppc_bars() — discrete data detected
+#> Data type: DISCRETE
+#> RECOMMENDED: ppc_rootogram(), ppc_bars()
 ```
 
----
+## Gallery
 
-## Function reference
+### Visualization goodness-of-fit
 
-### PIT computation
+KDE on normal data **passes** | KDE on Beta(2,5) without bounds **fails** | With `bounds = c(0,1)` **passes**
+:---:|:---:|:---:
+![pass](man/figures/viz_gof_pass.png) | ![fail](man/figures/viz_gof_fail.png) | ![bounds](man/figures/viz_gof_bounds.png)
 
-| Function | Description |
-|---|---|
-| `pit_kde(y, bw, kernel, bounds)` | Visualization PIT w.r.t. KDE |
-| `pit_histogram(y, breaks)` | Visualization PIT w.r.t. histogram |
-| `pit_qdotplot(y, n_quantiles, bw)` | Randomised PIT for quantile dot plots |
+### PAVA calibration plots (not available in bayesplot)
 
-### Goodness-of-fit
+Binary calibration | Calibration residuals | Discrete / ordinal
+:---:|:---:|:---:
+![cal](man/figures/ppc_calibration.png) | ![res](man/figures/ppc_calibration_residual.png) | ![disc](man/figures/ppc_calibration_discrete.png)
 
-| Function | Description |
-|---|---|
-| `viz_gof(pit, prob, K)` | Simultaneous ECDF uniformity test |
-| `check_viz(y, method, ...)` | Wrapper: compute PIT + print verdict |
+## Learn more
 
-### Data property detection
-
-| Function | Description |
-|---|---|
-| `detect_discrete(y, threshold)` | Detect point masses / discreteness |
-| `detect_bounds(y, tol)` | Detect natural lower/upper bounds |
-
-### Calibration plots (binary & discrete)
-
-| Function | Description |
-|---|---|
-| `ppc_calibration(y, yrep, ...)` | PAVA calibration plot for binary y |
-| `ppc_calibration_residual(y, yrep, x, ...)` | Calibration residual plot |
-| `ppc_calibration_discrete(y, yrep, ...)` | Calibration for ordinal/categorical y |
-
-### Recommender
-
-| Function | Description |
-|---|---|
-| `recommend_ppc(y, yrep)` | Data-driven PPC plot recommendation |
-
----
+- **[Get started](https://utkarshpawade.github.io/ppcviz/articles/ppcviz-intro.html)** — full walkthrough of all features with worked examples
+- **[Function reference](https://utkarshpawade.github.io/ppcviz/reference/)** — detailed documentation for every exported function
 
 ## Source paper
 
-All methodology implemented here is from:
-
-- Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).  
-  [*Recommendations for visual predictive checks in Bayesian workflow*](https://arxiv.org/abs/2503.01509)  
-  arXiv:2503.01509.
+> Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).
+> [*Recommendations for visual predictive checks in Bayesian workflow*](https://arxiv.org/abs/2503.01509).
+> arXiv:2503.01509.
 
 Please cite the original paper, not this repository.
