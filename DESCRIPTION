@@ -2,7 +2,7 @@ Package: ppcviz
 Title: Diagnostics and Recommendations for Visual Predictive Checks
 Version: 0.1.0
 Authors@R:
-    person("Study", "Implementation", email = "utkarshpawade2@gmail.com",
+    person("Utkarsh", "Pawade", email = "utkarshpawade2@gmail.com",
            role = c("aut", "cre"),
            comment = "Learning exercise; implements methodology from arXiv:2503.01509")
 Description: A self-learning implementation of the methodology from Sailynoja,
