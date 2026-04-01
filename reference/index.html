@@ -21,7 +21,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/ppcviz-intro.html">Introduction to ppcviz</a></li>
   </ul></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/utkarshpawade/ppcviz"><span class="fa fa-github"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/utkarshpawade/ppcviz" aria-label="GitHub"><span class="fa fa-github"></span></a></li>
       </ul></div>
 
 
@@ -36,7 +36,7 @@
     <div class="section level2">
       <h2 id="visualization-pit-values">Visualization PIT values<a class="anchor" aria-label="anchor" href="#visualization-pit-values"></a></h2>
 
-      <div class="section-desc"><p>Compute probability integral transform (PIT) values for a specific plot type. Non-uniform PITs indicate the visualization misrepresents the data distribution.</p></div>
+      <div class="section-desc"><p>Compute probability integral transform (PIT) values for a specific plot type. If the resulting PIT values are uniform on [0, 1], the visualization is faithful to the data; non-uniformity reveals where the plot misleads.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -66,7 +66,7 @@
       </dl></div><div class="section level2">
       <h2 id="goodness-of-fit-tests">Goodness-of-fit tests<a class="anchor" aria-label="anchor" href="#goodness-of-fit-tests"></a></h2>
 
-      <div class="section-desc"><p>Test whether PIT values are consistent with the uniform distribution using simultaneous ECDF confidence bands.</p></div>
+      <div class="section-desc"><p>Test whether PIT values are consistent with the uniform distribution using simultaneous ECDF confidence bands calibrated via Monte Carlo simulation (Säilynoja, Bürkner &amp; Vehtari, 2022).</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -89,7 +89,7 @@
       </dl></div><div class="section level2">
       <h2 id="data-property-detection">Data property detection<a class="anchor" aria-label="anchor" href="#data-property-detection"></a></h2>
 
-      <div class="section-desc"><p>Detect discreteness, point masses, and natural boundaries in observed data before choosing a plot type.</p></div>
+      <div class="section-desc"><p>Automatically detect discreteness, point masses, zero-inflation, and natural boundaries (non-negativity, proportions) in observed data before choosing a plot type.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -112,7 +112,7 @@
       </dl></div><div class="section level2">
       <h2 id="calibration-plots">Calibration plots<a class="anchor" aria-label="anchor" href="#calibration-plots"></a></h2>
 
-      <div class="section-desc"><p>PAVA-based calibration plots for binary and discrete outcomes. Not available in bayesplot.</p></div>
+      <div class="section-desc"><p>PAVA-based (isotonic regression) calibration plots for binary and discrete outcomes with bootstrap consistency intervals. These plots are not available in bayesplot and implement Sections 4-5 of the paper.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -142,7 +142,7 @@
       </dl></div><div class="section level2">
       <h2 id="automatic-recommender">Automatic recommender<a class="anchor" aria-label="anchor" href="#automatic-recommender"></a></h2>
 
-      <div class="section-desc"><p>Data-driven recommendation of the most appropriate PPC plot function.</p></div>
+      <div class="section-desc"><p>Examines data properties and optionally runs a KDE goodness-of-fit test, then returns a prioritised recommendation of which PPC plot function to use for your data.</p></div>
 
       <dl></dl></div><div class="section level2">
 

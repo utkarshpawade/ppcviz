@@ -7,14 +7,15 @@
 
 ## Citation
 
-Pawade U (2026). *ppcviz: Diagnostics and Recommendations for Visual
-Predictive Checks*. R package version 0.1.0,
-<https://utkarshpawade.github.io/ppcviz/>.
+Säilynoja T, Johnson A, Martin R, Vehtari A (2025). “Recommendations for
+visual predictive checks in Bayesian workflow.” *arXiv preprint*.
+arXiv:2503.01509, <https://arxiv.org/abs/2503.01509>.
 
-    @Manual{,
-      title = {ppcviz: Diagnostics and Recommendations for Visual Predictive Checks},
-      author = {Utkarsh Pawade},
-      year = {2026},
-      note = {R package version 0.1.0},
-      url = {https://utkarshpawade.github.io/ppcviz/},
+    @Article{,
+      title = {Recommendations for visual predictive checks in Bayesian workflow},
+      author = {Teemu Säilynoja and Aki Johnson and Raul Martin and Aki Vehtari},
+      year = {2025},
+      journal = {arXiv preprint},
+      note = {arXiv:2503.01509},
+      url = {https://arxiv.org/abs/2503.01509},
     }

@@ -3,8 +3,9 @@
 ## Visualization PIT values
 
 Compute probability integral transform (PIT) values for a specific plot
-type. Non-uniform PITs indicate the visualization misrepresents the data
-distribution.
+type. If the resulting PIT values are uniform on \[0, 1\], the
+visualization is faithful to the data; non-uniformity reveals where the
+plot misleads.
 
 - [`pit_kde()`](https://utkarshpawade.github.io/ppcviz/reference/pit_kde.md)
   : Compute Visualization PIT Values for KDE
@@ -16,7 +17,8 @@ distribution.
 ## Goodness-of-fit tests
 
 Test whether PIT values are consistent with the uniform distribution
-using simultaneous ECDF confidence bands.
+using simultaneous ECDF confidence bands calibrated via Monte Carlo
+simulation (Säilynoja, Bürkner & Vehtari, 2022).
 
 - [`viz_gof()`](https://utkarshpawade.github.io/ppcviz/reference/viz_gof.md)
   : Goodness-of-Fit Test for Visualization PIT Values
@@ -25,8 +27,9 @@ using simultaneous ECDF confidence bands.
 
 ## Data property detection
 
-Detect discreteness, point masses, and natural boundaries in observed
-data before choosing a plot type.
+Automatically detect discreteness, point masses, zero-inflation, and
+natural boundaries (non-negativity, proportions) in observed data before
+choosing a plot type.
 
 - [`detect_discrete()`](https://utkarshpawade.github.io/ppcviz/reference/detect_discrete.md)
   : Detect Discreteness or Point Masses in Data
@@ -35,8 +38,9 @@ data before choosing a plot type.
 
 ## Calibration plots
 
-PAVA-based calibration plots for binary and discrete outcomes. Not
-available in bayesplot.
+PAVA-based (isotonic regression) calibration plots for binary and
+discrete outcomes with bootstrap consistency intervals. These plots are
+not available in bayesplot and implement Sections 4-5 of the paper.
 
 - [`ppc_calibration()`](https://utkarshpawade.github.io/ppcviz/reference/ppc_calibration.md)
   : PAVA Calibration Plot for Binary Outcomes
@@ -47,7 +51,9 @@ available in bayesplot.
 
 ## Automatic recommender
 
-Data-driven recommendation of the most appropriate PPC plot function.
+Examines data properties and optionally runs a KDE goodness-of-fit test,
+then returns a prioritised recommendation of which PPC plot function to
+use for your data.
 
 - [`recommend_ppc()`](https://utkarshpawade.github.io/ppcviz/reference/recommend_ppc.md)
   : Automatic PPC Plot Recommender
