@@ -1,7 +1,5 @@
 # ppcviz
 
-> **Self-learning exercise — not affiliated with or endorsed by the original authors.**
-
 This is a personal study project. I implemented this R package to understand
 the methodology in the paper below by translating it into working code.
 It is not intended for publication or distribution.
