@@ -102,11 +102,9 @@ ppc_calibration_residual <- function(y, yrep, x = NULL, n_quantiles = 10L,
     if (!is.numeric(x) || length(x) != n) {
       rlang::abort("`x` must be a numeric vector of the same length as `y`.")
     }
-    x_axis_vals <- x
-    x_label     <- "Covariate x"
+    x_label <- "Covariate x"
   } else {
-    x_axis_vals <- p
-    x_label     <- "Predicted probability"
+    x_label <- "Predicted probability"
   }
 
   cep_df   <- .compute_cep(y, p, n_quantiles)
@@ -118,14 +116,29 @@ ppc_calibration_residual <- function(y, yrep, x = NULL, n_quantiles = 10L,
 
   col <- .ppcviz_colors()
 
+  # Compute the x-axis values per bin. When a covariate x is provided, use the
+  # mean of x within each quantile bin (bins are always defined in p-space).
+  n_q    <- as.integer(n_quantiles)
+  breaks <- unique(stats::quantile(p, probs = seq(0, 1, length.out = n_q + 1L),
+                                   type = 7))
+  bins   <- cut(p, breaks = breaks, include.lowest = TRUE)
+
+  if (!is.null(x)) {
+    x_bin <- as.numeric(tapply(x, bins, mean))
+    valid  <- !is.na(x_bin) & !is.na(tapply(p, bins, mean))
+    x_axis_col <- x_bin[valid]
+  } else {
+    x_axis_col <- cep_df$p_mid
+  }
+
   plot_df <- data.frame(
-    p_mid        = cep_df$p_mid,
+    x_axis       = x_axis_col,
     resid        = cep_df$resid,
     lower_resid  = boot$lower_resid,
     upper_resid  = boot$upper_resid
   )
 
-  ggplot2::ggplot(plot_df, ggplot2::aes(x = .data$p_mid)) +
+  ggplot2::ggplot(plot_df, ggplot2::aes(x = .data$x_axis)) +
     ggplot2::geom_ribbon(
       ggplot2::aes(ymin = .data$lower_resid, ymax = .data$upper_resid),
       fill  = col$light,
@@ -299,11 +312,8 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
   }
 }
 
-#' Compute CEP using isotonic regression (PAVA)
-#' @param y Binary integer vector.
-#' @param p Numeric vector of predicted probabilities.
-#' @param n_quantiles Integer. Number of quantile bins.
 #' @keywords internal
+#' @noRd
 .compute_cep <- function(y, p, n_quantiles) {
   n_q <- as.integer(n_quantiles)
   breaks <- unique(stats::quantile(p, probs = seq(0, 1, length.out = n_q + 1L),
@@ -327,8 +337,8 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
   data.frame(p_mid = bin_p_mid, cep = cep)
 }
 
-#' Bootstrap consistency intervals for CEP
 #' @keywords internal
+#' @noRd
 .boot_cep <- function(y, p, n_quantiles, n_boot, prob) {
   n <- length(y)
   alpha <- 1 - prob
@@ -387,8 +397,8 @@ ppc_calibration_discrete <- function(y, yrep, n_quantiles = 10L,
   data.frame(lower = lower, upper = upper)
 }
 
-#' Internal plot helper for calibration
 #' @keywords internal
+#' @noRd
 .plot_calibration <- function(cep_df, boot, x_label, y_label, title,
                                ref_line = TRUE) {
   col <- .ppcviz_colors()

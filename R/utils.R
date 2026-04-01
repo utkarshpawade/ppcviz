@@ -1,19 +1,6 @@
-utils::globalVariables(".data")
-
-
-#' Adjust gamma for simultaneous ECDF confidence bands (internal)
-#'
-#' Finds the smallest gamma such that the simultaneous confidence band
-#' P(max_t |F_n(t) - t| <= gamma * sqrt(t(1-t)/n)) >= prob
-#' using the Dvoretzky-Kiefer-Wolfowitz inequality as the outer bound and
-#' binary search with Monte Carlo calibration.
-#'
-#' @param n Integer. Number of observations.
-#' @param prob Nominal coverage probability (e.g. 0.95).
-#' @param K Integer. Number of equally-spaced evaluation points on (0,1).
-#' @param n_sim Integer. Number of Monte Carlo simulations for calibration.
-#' @return Numeric scalar gamma.
+#' @importFrom rlang .data
 #' @keywords internal
+#' @noRd
 .adjust_gamma_optimize <- function(n, prob = 0.95, K = NULL, n_sim = 1000L) {
   if (is.null(K)) K <- min(n, 1000L)
 
@@ -21,7 +8,6 @@ utils::globalVariables(".data")
 
   se_z <- sqrt(z * (1 - z) / n)
 
-  set.seed(NULL)
   max_devs <- vapply(seq_len(n_sim), function(i) {
     u <- sort(stats::runif(n))
     ecdf_vals <- (seq_len(n)) / n
@@ -43,16 +29,8 @@ utils::globalVariables(".data")
 }
 
 
-#' Compute simultaneous ECDF confidence bands (internal)
-#'
-#' Returns lower and upper pointwise bounds such that their simultaneous
-#' coverage is approximately `prob` for a uniform distribution.
-#'
-#' @param z Numeric vector of evaluation points in (0, 1).
-#' @param n Integer. Sample size.
-#' @param gamma Numeric scalar from `.adjust_gamma_optimize()`.
-#' @return Data frame with columns `z`, `lower`, `upper`.
 #' @keywords internal
+#' @noRd
 .ecdf_bands <- function(z, n, gamma) {
   se_z <- sqrt(z * (1 - z) / n)
   lower <- pmax(z - gamma * se_z, 0)
@@ -61,15 +39,8 @@ utils::globalVariables(".data")
 }
 
 
-#' Cumulative trapezoid integration (internal)
-#'
-#' Computes the cumulative integral of `y` over `x` using the trapezoid rule.
-#' Returns a vector of the same length as `x`, with the first element = 0.
-#'
-#' @param x Numeric vector of x-coordinates (must be sorted).
-#' @param y Numeric vector of y-values (same length as `x`).
-#' @return Numeric vector of cumulative integrals.
 #' @keywords internal
+#' @noRd
 .cumtrapz <- function(x, y) {
   n <- length(x)
   if (n != length(y)) rlang::abort("x and y must have the same length.")
@@ -79,10 +50,8 @@ utils::globalVariables(".data")
 }
 
 
-#' Bayesplot-compatible colour palette (internal)
-#'
-#' Returns a minimal named list of colours consistent with bayesplot defaults.
 #' @keywords internal
+#' @noRd
 .ppcviz_colors <- function() {
   list(
     mid    = "#9497C4",
@@ -94,8 +63,8 @@ utils::globalVariables(".data")
 }
 
 
-#' Minimal ggplot2 theme consistent with bayesplot (internal)
 #' @keywords internal
+#' @noRd
 .ppcviz_theme <- function() {
   ggplot2::theme_bw() +
     ggplot2::theme(

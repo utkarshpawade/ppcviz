@@ -1,14 +1,23 @@
 # ppcviz
 
-**Diagnostics and Recommendations for Visual Predictive Checks**
+> **Self-learning exercise — not affiliated with or endorsed by the original authors.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+This is a personal study project. I implemented this R package to understand
+the methodology in the paper below by translating it into working code.
+It is not intended for publication or distribution.
 
-`ppcviz` implements the novel contributions from:
+---
+
+**Paper being implemented:**
 
 > [Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).  
 > *Recommendations for visual predictive checks in Bayesian workflow*.  
 > arXiv:2503.01509](https://arxiv.org/abs/2503.01509)
+
+All statistical methodology, terminology, and algorithms belong to the original
+authors. This code is an independent reimplementation for learning purposes only.
+
+---
 
 The package answers a question that `bayesplot` cannot: **is the plot type I
 chose faithful to my data?** A KDE overlay, a histogram, and a quantile dot
@@ -34,15 +43,11 @@ as a probe.
 
 ---
 
-## Installation
+## Installation (local only)
 
 ```r
 # Install from local source
-install.packages("c:/Projects/Paper Implementation/ppcviz",
-                 repos = NULL, type = "source")
-
-# Or with devtools (once on CRAN/GitHub):
-# devtools::install_github("example/ppcviz")
+devtools::install("path/to/ppcviz")
 ```
 
 ---
@@ -157,10 +162,12 @@ recommend_ppc(rpois(300, lambda = 3))
 
 ---
 
-## Citation
+## Source paper
 
-This project is inspired by and partially based on:
+All methodology implemented here is from:
 
 - Säilynoja, T., Johnson, A., Martin, R., & Vehtari, A. (2025).  
   [*Recommendations for visual predictive checks in Bayesian workflow*](https://arxiv.org/abs/2503.01509)  
   arXiv:2503.01509.
+
+Please cite the original paper, not this repository.

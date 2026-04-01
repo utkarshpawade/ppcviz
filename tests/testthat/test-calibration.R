@@ -60,3 +60,16 @@ test_that("ppc_calibration_discrete: errors on single-category y", {
   yrep_s   <- matrix(1L, nrow = 20, ncol = 50)
   expect_error(ppc_calibration_discrete(y_single, yrep_s), "unique values")
 })
+
+test_that("ppc_calibration_residual: x covariate changes x-axis data, not just label", {
+  skip_if_not_installed("ggplot2")
+  set.seed(1)
+  x_cov <- rnorm(200)
+  p_cov <- ppc_calibration_residual(y_binary, yrep_bin, x = x_cov, n_boot = 20L)
+  p_no  <- ppc_calibration_residual(y_binary, yrep_bin, n_boot = 20L)
+  # Extract the x values used in each plot's data
+  x_with_cov <- ggplot2::ggplot_build(p_cov)$data[[1]]$x
+  x_without  <- ggplot2::ggplot_build(p_no)$data[[1]]$x
+  # The x-axis data must differ when a covariate is provided
+  expect_false(isTRUE(all.equal(x_with_cov, x_without)))
+})

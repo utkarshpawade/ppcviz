@@ -2,21 +2,27 @@ Package: ppcviz
 Title: Diagnostics and Recommendations for Visual Predictive Checks
 Version: 0.1.0
 Authors@R:
-    person("Package", "Author", email = "author@example.com", role = c("aut", "cre"))
-Description: Implements the novel contributions from Sailynoja, Johnson, Martin &
-    Vehtari (2025) <arXiv:2503.01509> "Recommendations for visual predictive checks
-    in Bayesian workflow". Provides tools to (1) compute visualization PIT values
-    that test whether a chosen plot type faithfully represents the data distribution,
-    (2) run goodness-of-fit diagnostics for visualizations using simultaneous ECDF
-    confidence bands, (3) detect data properties (discreteness, bounds, point masses),
-    (4) produce PAVA-based calibration plots for binary and discrete outcomes, and
-    (5) automatically recommend appropriate posterior predictive check plots.
+    person("Study", "Implementation", email = "utkarshpawade2@gmail.com",
+           role = c("aut", "cre"),
+           comment = "Learning exercise; implements methodology from arXiv:2503.01509")
+Description: A self-learning implementation of the methodology from Sailynoja,
+    Johnson, Martin & Vehtari (2025) <arXiv:2503.01509> "Recommendations for
+    visual predictive checks in Bayesian workflow". This package is a personal
+    study exercise and is not affiliated with or endorsed by the original authors.
+    It provides tools to (1) compute visualization PIT values that test whether a
+    chosen plot type faithfully represents the data distribution, (2) run
+    goodness-of-fit diagnostics for visualizations using simultaneous ECDF
+    confidence bands, (3) detect data properties (discreteness, bounds, point
+    masses), (4) produce PAVA-based calibration plots for binary and discrete
+    outcomes, and (5) automatically recommend appropriate posterior predictive
+    check plots.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
     ggplot2 (>= 3.4.0),
+    graphics,
     rlang (>= 1.0.0),
     stats
 Suggests:
@@ -29,4 +35,3 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://arxiv.org/abs/2503.01509
-BugReports: https://github.com/example/ppcviz/issues

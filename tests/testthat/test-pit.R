@@ -77,3 +77,20 @@ test_that("pit_qdotplot: values vary (not all identical)", {
   pit <- pit_qdotplot(y_normal, n_quantiles = 50L)
   expect_gt(var(pit), 0)
 })
+
+test_that("pit_qdotplot: zero-variance data errors gracefully", {
+  # diff(range(y)) == 0 makes default bw = 0, which should abort
+  expect_error(pit_qdotplot(rep(1.0, 50), n_quantiles = 10L), "`bw` must be positive")
+})
+
+test_that("pit_kde: zero-variance data errors gracefully", {
+  # stats::density with bw='SJ' on constant data should error; we propagate it
+  expect_error(pit_kde(rep(1.0, 50)))
+})
+
+test_that("pit_histogram: minimum valid n (n=3) does not crash", {
+  y_min <- c(1.0, 2.0, 3.0)
+  pit <- pit_histogram(y_min, breaks = 2L)
+  expect_length(pit, 3L)
+  expect_true(all(pit >= 0 & pit <= 1))
+})

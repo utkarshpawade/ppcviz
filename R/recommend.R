@@ -117,12 +117,7 @@ recommend_ppc <- function(y, yrep = NULL) {
     data_type <- "continuous"
 
     if (!is.null(yrep)) {
-      kde_gof <- tryCatch(
-        check_viz(y, method = "kde"),
-        warning = function(w) {
-          suppressWarnings(check_viz(y, method = "kde"))
-        }
-      )
+      kde_gof <- suppressWarnings(check_viz(y, method = "kde"))
     }
 
     if (bounds$likely_proportion) {

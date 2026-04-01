@@ -247,7 +247,11 @@ print.bounds_check <- function(x, ...) {
   if (!is.numeric(y)) {
     rlang::abort("`y` must be a numeric vector.")
   }
-  y <- y[!is.na(y)]
+  n_na <- sum(is.na(y))
+  if (n_na > 0L) {
+    rlang::warn(sprintf("Removed %d NA value(s) from `y`.", n_na))
+    y <- y[!is.na(y)]
+  }
   if (length(y) < min_n) {
     rlang::abort(sprintf("`y` must have at least %d non-NA values.", min_n))
   }

@@ -80,3 +80,15 @@ test_that("detect_bounds: print outputs 'proportion' for beta data", {
   res <- detect_bounds(y_beta)
   expect_output(print(res), "PROPORTION|proportion", ignore.case = TRUE)
 })
+
+test_that("detect_bounds: all-negative unbounded data has no bounds", {
+  y_neg <- rnorm(300, mean = -10, sd = 1)
+  res <- detect_bounds(y_neg)
+  expect_false(res$likely_non_negative)
+  expect_false(res$likely_proportion)
+  expect_null(res$lower)
+})
+
+test_that(".validate_y: warns when NAs are removed", {
+  expect_warning(detect_discrete(c(1, 2, NA, 4, 5)), "NA")
+})
