@@ -1,0 +1,77 @@
+url: https://utkarshpawade.github.io/ppcviz/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: "ppcviz — Visual Predictive Check Diagnostics"
+  description: >
+    A self-learning implementation of the methodology from Säilynoja, Johnson,
+    Martin & Vehtari (2025) arXiv:2503.01509. Provides tools to test whether
+    a chosen PPC plot faithfully represents your data.
+  links:
+    - text: "Source paper (arXiv:2503.01509)"
+      href: https://arxiv.org/abs/2503.01509
+
+navbar:
+  structure:
+    left:  [intro, reference, articles]
+    right: [github]
+  components:
+    intro:
+      text: "Get started"
+      href: articles/ppcviz-intro.html
+    reference:
+      text: "Reference"
+      href: reference/index.html
+    github:
+      icon: fa-github
+      href: https://github.com/utkarshpawade/ppcviz
+
+reference:
+  - title: "Visualization PIT values"
+    desc: >
+      Compute probability integral transform (PIT) values for a specific
+      plot type. Non-uniform PITs indicate the visualization misrepresents
+      the data distribution.
+    contents:
+      - pit_kde
+      - pit_histogram
+      - pit_qdotplot
+
+  - title: "Goodness-of-fit tests"
+    desc: >
+      Test whether PIT values are consistent with the uniform distribution
+      using simultaneous ECDF confidence bands.
+    contents:
+      - viz_gof
+      - check_viz
+
+  - title: "Data property detection"
+    desc: >
+      Detect discreteness, point masses, and natural boundaries in observed
+      data before choosing a plot type.
+    contents:
+      - detect_discrete
+      - detect_bounds
+
+  - title: "Calibration plots"
+    desc: >
+      PAVA-based calibration plots for binary and discrete outcomes.
+      Not available in bayesplot.
+    contents:
+      - ppc_calibration
+      - ppc_calibration_residual
+      - ppc_calibration_discrete
+
+  - title: "Automatic recommender"
+    desc: >
+      Data-driven recommendation of the most appropriate PPC plot function.
+    contents:
+      - recommend_ppc
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with

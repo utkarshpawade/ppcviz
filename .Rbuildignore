@@ -1,3 +1,6 @@
 ^LICENSE\.md$
 ^README\.md$
 ^\.Rbuildignore$
+^_pkgdown\.yml$
+^docs$
+^\.github$
