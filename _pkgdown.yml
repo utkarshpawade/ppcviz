@@ -14,7 +14,7 @@ home:
     Provides visualization PIT values, goodness-of-fit tests, PAVA calibration
     plots, and automatic plot recommendation.
   sidebar:
-    structure: [links, license, citation, dev]
+    structure: [links, license, dev]
   links:
     - text: "Source paper (arXiv:2503.01509)"
       href: https://arxiv.org/abs/2503.01509
