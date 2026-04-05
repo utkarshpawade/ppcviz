@@ -67,15 +67,31 @@ recommend_ppc(rpois(300, lambda = 3))
 
 ### Visualization goodness-of-fit
 
-KDE on normal data **passes** | KDE on Beta(2,5) without bounds **fails** | With `bounds = c(0,1)` **passes**
-:---:|:---:|:---:
-![pass](man/figures/viz_gof_pass.png) | ![fail](man/figures/viz_gof_fail.png) | ![bounds](man/figures/viz_gof_bounds.png)
+**KDE on normal data — passes**
+
+![pass](man/figures/viz_gof_pass.png)
+
+**KDE on Beta(2,5) without bounds — fails**
+
+![fail](man/figures/viz_gof_fail.png)
+
+**With `bounds = c(0,1)` — passes**
+
+![bounds](man/figures/viz_gof_bounds.png)
 
 ### PAVA calibration plots (not available in bayesplot)
 
-Binary calibration | Calibration residuals | Discrete / ordinal
-:---:|:---:|:---:
-![cal](man/figures/ppc_calibration.png) | ![res](man/figures/ppc_calibration_residual.png) | ![disc](man/figures/ppc_calibration_discrete.png)
+**Binary calibration**
+
+![cal](man/figures/ppc_calibration.png)
+
+**Calibration residuals**
+
+![res](man/figures/ppc_calibration_residual.png)
+
+**Discrete / ordinal**
+
+![disc](man/figures/ppc_calibration_discrete.png)
 
 ## Learn more
 
